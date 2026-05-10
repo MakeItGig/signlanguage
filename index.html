@@ -65,6 +65,37 @@
     <p id="charDesc" style="font-size: 16px; margin-top: 5px"></p>
 
     <script>
+      // ====== 設定（SHA256 ハッシュ値） ======
+      const correctHash =
+        "c4b9f1c2b0a1f0e5b8d3c4e7a9f2b1d0c3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a";
+      // ======================================
+
+      async function sha256(str) {
+        const buf = await crypto.subtle.digest(
+          "SHA-256",
+          new TextEncoder().encode(str),
+        );
+        return Array.from(new Uint8Array(buf))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+      }
+
+      async function checkPassword() {
+        const input = prompt("パスワードを入力してください");
+        const hash = await sha256(input);
+
+        if (hash !== correctHash) {
+          document.documentElement.innerHTML =
+            "<h2 style='text-align:center;margin-top:40px;'>アクセス拒否</h2>";
+        } else {
+          // スクロール禁止
+          document.documentElement.style.overflow = "hidden";
+          document.body.style.overflow = "hidden";
+        }
+      }
+
+      checkPassword();
+
       // 画像ファイル名（ローマ字統一版）
       const chars = [
         "a",
